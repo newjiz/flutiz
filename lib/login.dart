@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:thor/main.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+
 class LoginForm extends StatefulWidget {
   @override
   LoginFormState createState() {
@@ -49,8 +53,12 @@ class LoginFormState extends State<LoginForm> {
             child: RaisedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  addItem("username", _username.text);
-                  Navigator.pushNamed(context, '/user');
+                  Map user = {
+                    "username": _username.text,
+                    "password": _password.text
+                  };
+                  
+                  fetchLogin(context, user);
                 }
               },
               child: Text('Submit'),
@@ -62,6 +70,20 @@ class LoginFormState extends State<LoginForm> {
   }
 }
 
-void addItem(String key, String value) async {
-  await storage.write(key: key, value: value);
+void fetchLogin(BuildContext ctx, Map user) async {
+  final response = await http.post(
+      URL + "/login",
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(user)
+    );
+
+  print(response.statusCode);
+
+  if (response.statusCode == 200) {
+    Token token = Token.fromJson(json.decode(response.body));
+    await storage.write(key: "token", value: token.token);    
+    Navigator.popAndPushNamed(ctx, '/user');
+  } else {
+    Navigator.popAndPushNamed(ctx, '/login');
+  }
 }

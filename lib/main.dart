@@ -1,11 +1,15 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:thor/login.dart';
 import 'package:thor/register.dart';
+import 'package:thor/contest.dart';
+import 'package:thor/ranking.dart';
+import 'package:thor/user.dart';
+import 'package:thor/content.dart';
 
+const URL = "http://10.0.2.2:5000";
 
 FlutterSecureStorage storage = new FlutterSecureStorage();
 
@@ -26,6 +30,8 @@ class App extends StatelessWidget {
         '/register': (context) => RegisterPage(),
         '/ranking': (context) => RankingPage(),
         '/user': (context) => UserPage(),
+        '/contest': (context) => ContestPage(),
+        '/content': (context) => ContentPage(),
       },
     );
   }
@@ -68,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Center(
                     child: RaisedButton(
@@ -82,13 +88,46 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () => Navigator.pushNamed(context, '/register'),
                     ),
                   ),
+                  Center(
+                    child: RaisedButton(
+                      child: Text('User'),
+                      onPressed: () => Navigator.pushNamed(context, '/user'),
+                    ),
+                  ),
               ]),
-              Center(
-                child: RaisedButton(
-                  child: Text('Ranking'),
-                  onPressed: () => Navigator.pushNamed(context, '/ranking'),
-                ),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Center(
+                    child: RaisedButton(
+                      child: Text('Ranking'),
+                      onPressed: () => Navigator.pushNamed(context, '/ranking'),
+                    ),
+                  ),
+                  Center(
+                    child: RaisedButton(
+                      child: Text('Contest'),
+                      onPressed: () => Navigator.pushNamed(context, '/contest'),
+                    ),
+                  ),
+              ]),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Center(
+                    child: RaisedButton(
+                      child: Text('Logout'),
+                      onPressed: () async => await storage.delete(key: "token"),
+                    ),
+                  ),
+                  Center(
+                    child: RaisedButton(
+                      child: Text('Post content'),
+                      onPressed: () => Navigator.pushNamed(context, '/content'),
+                    ),
+                  ),
+              ]),
+
           ])
         )
       )
@@ -143,61 +182,31 @@ class RankingPage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Ranking"),
       ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Home'),
-        ),
-      ),
+      body: Ranking()
     );
   }
 }
 
-
-class UserPage extends StatefulWidget {
-  UserPage({Key key, this.username}) : super(key: key);
-  final String username;
-
-  @override
-  _UserPageState createState() => _UserPageState();
-}
-
-class _UserPageState extends State<UserPage> {
-  String _username;
-
-  void initState() {
-      super.initState();
-      if(_username == null){
-        readItem("username").then(
-            (String s) => setState(() {_username = s;})
-        );
-      }
-  }
-
+class ContestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Hi, $_username!"),
-          Center(
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Home'),
-            ),
-          ),
-        ])
+      appBar: AppBar(
+        title: Text("Current contest"),
+      ),
+      body: Contest()
     );
   }
 }
 
-Future<String> readItem(String key) async {
-  final value = await storage.read(key: key);
-  return value;
+class Token {
+  final String token;
+
+  Token({this.token});
+
+  factory Token.fromJson(Map<String, dynamic> json) {
+    return Token(
+      token: json['token']
+    );
+  }
 }

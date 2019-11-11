@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:thor/main.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class RegisterUser {
+  final String username;
+  final String email;
+  final String description;
+  final String password;
+
+  RegisterUser({this.username, this.email, this.description, this.password});
+}
+
 class RegisterForm extends StatefulWidget {
   @override
   RegisterFormState createState() {
@@ -13,6 +25,7 @@ class RegisterFormState extends State<RegisterForm> {
 
   TextEditingController _email = TextEditingController();
   TextEditingController _username = TextEditingController();
+  TextEditingController _description = TextEditingController();
   TextEditingController _password = TextEditingController();
 
   @override
@@ -47,6 +60,14 @@ class RegisterFormState extends State<RegisterForm> {
             onSaved: (value) => _username.text = value,
           ),
           TextFormField(
+            controller: _description,
+            decoration: InputDecoration(
+              hintText: "Description (Optional)"
+            ),
+            validator: (value) => null,
+            onSaved: (value) => _description.text = value,
+          ),
+          TextFormField(
             controller: _password,
             obscureText: true,
             decoration: InputDecoration(
@@ -62,8 +83,14 @@ class RegisterFormState extends State<RegisterForm> {
             child: RaisedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  addItem("username", _username.text);
-                  Navigator.pushNamed(context, '/user');
+                  Map user = {
+                    "username": _username.text,
+                    "email": _email.text,
+                    "description": _description.text,
+                    "password": _password.text
+                  };
+                  
+                  fetchRegister(context, user);
                 }
               },
               child: Text('Submit'),
@@ -75,6 +102,20 @@ class RegisterFormState extends State<RegisterForm> {
   }
 }
 
-void addItem(String key, String value) async {
-  await storage.write(key: key, value: value);
+void fetchRegister(BuildContext ctx, Map user) async {
+  final response = await http.post(
+      URL + "/register",
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(user)
+    );
+
+  print(response.statusCode);
+
+  if (response.statusCode == 200) {
+    Token token = Token.fromJson(json.decode(response.body));
+    await storage.write(key: "token", value: token.token);    
+    Navigator.popAndPushNamed(ctx, '/user');
+  } else {
+    Navigator.popAndPushNamed(ctx, '/register');
+  }
 }
