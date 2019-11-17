@@ -8,6 +8,8 @@ import 'package:thor/contest.dart';
 import 'package:thor/ranking.dart';
 import 'package:thor/user.dart';
 import 'package:thor/content.dart';
+import 'package:thor/vote.dart';
+
 
 const URL = "http://10.0.2.2:5000";
 
@@ -32,6 +34,7 @@ class App extends StatelessWidget {
         '/user': (context) => UserPage(),
         '/contest': (context) => ContestPage(),
         '/content': (context) => ContentPage(),
+        '/vote': (context) => VotePage(),
       },
     );
   }
@@ -127,8 +130,37 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
               ]),
-
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Center(
+                    child: RaisedButton(
+                      child: Text('Vote'),
+                      onPressed: () => Navigator.pushNamed(context, '/vote'),
+                    ),
+                  )
+              ]),
           ])
+        )
+      )
+    );
+  }
+}
+
+class VotePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Vote"),
+      ),
+      body: Container(
+        padding: new EdgeInsets.symmetric(
+          vertical: 40.0,
+          horizontal: 40.0  
+        ),
+        child: Center(
+          child: Vote(),
         )
       )
     );
