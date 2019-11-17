@@ -93,7 +93,7 @@ class RegisterFormState extends State<RegisterForm> {
                   fetchRegister(context, user);
                 }
               },
-              child: Text('Submit'),
+              child: Text('Register'),
             ),
           ),
         ],
@@ -114,6 +114,7 @@ void fetchRegister(BuildContext ctx, Map user) async {
   if (response.statusCode == 200) {
     Token token = Token.fromJson(json.decode(response.body));
     await storage.write(key: "token", value: token.token);    
+    logged = true;
     Navigator.popAndPushNamed(ctx, '/user');
   } else {
     Navigator.popAndPushNamed(ctx, '/register');

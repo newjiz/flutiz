@@ -12,6 +12,7 @@ import 'package:thor/vote.dart';
 
 
 const URL = "http://10.0.2.2:5000";
+bool logged = false;
 
 FlutterSecureStorage storage = new FlutterSecureStorage();
 
@@ -23,7 +24,11 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: "jiz",
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+        primaryColor: Colors.yellow,
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
       ),
       initialRoute: '/',
       routes: {
@@ -51,99 +56,136 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Home"),
-      ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20.0,
-          vertical: 20.0
-          ),
-        child: Container(
-          padding: new EdgeInsets.symmetric(
-            vertical: 30.0,
-            horizontal: 40.0
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Text(
-                  "jizzz",
-                  style: TextStyle(
-                    fontSize: 48
-                  )
+    if (logged) {
+      return Scaffold(
+        appBar: null,
+        body: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+            vertical: 20.0
+            ),
+          child: Container(
+            padding: new EdgeInsets.symmetric(
+              vertical: 30.0,
+              horizontal: 40.0
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    "logged in mama",
+                    style: TextStyle(
+                      fontSize: 32
+                    )
+                  ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Center(
-                    child: RaisedButton(
-                      child: Text('Login'),
-                      onPressed: () => Navigator.pushNamed(context, '/login'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Profile'),
+                        onPressed: () => Navigator.pushNamed(context, '/user'),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text('Register'),
-                      onPressed: () => Navigator.pushNamed(context, '/register'),
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Ranking'),
+                        onPressed: () => Navigator.pushNamed(context, '/ranking'),
+                      ),
+                    )
+                ]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Contest'),
+                        onPressed: () => Navigator.pushNamed(context, '/contest'),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text('User'),
-                      onPressed: () => Navigator.pushNamed(context, '/user'),
-                    ),
-                  ),
-              ]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Center(
-                    child: RaisedButton(
-                      child: Text('Ranking'),
-                      onPressed: () => Navigator.pushNamed(context, '/ranking'),
-                    ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text('Contest'),
-                      onPressed: () => Navigator.pushNamed(context, '/contest'),
-                    ),
-                  ),
-              ]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Center(
-                    child: RaisedButton(
-                      child: Text('Logout'),
-                      onPressed: () async => await storage.delete(key: "token"),
-                    ),
-                  ),
-                  Center(
-                    child: RaisedButton(
-                      child: Text('Post content'),
-                      onPressed: () => Navigator.pushNamed(context, '/content'),
-                    ),
-                  ),
-              ]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Center(
-                    child: RaisedButton(
-                      child: Text('Vote'),
-                      onPressed: () => Navigator.pushNamed(context, '/vote'),
-                    ),
-                  )
-              ]),
-          ])
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Vote'),
+                        onPressed: () => Navigator.pushNamed(context, '/vote'),
+                      ),
+                    )
+                ]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Logout'),
+                        onPressed: () async {
+                            logged = false;
+                            await storage.delete(key: "token");
+                            Navigator.popAndPushNamed(context, "/");
+                          },
+                      ),
+                    )
+                ]),
+            ])
+          )
         )
-      )
-    );
+      );
+    } else {
+        return Scaffold(
+        appBar: null,
+        body: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+            vertical: 20.0
+            ),
+          child: Container(
+            padding: new EdgeInsets.symmetric(
+              vertical: 30.0,
+              horizontal: 40.0
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    "jiz, can u log in?",
+                    style: TextStyle(
+                      fontSize: 32
+                    )
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Login'),
+                        onPressed: () => Navigator.pushNamed(context, '/login'),
+                      ),
+                    ),
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Register'),
+                        onPressed: () => Navigator.pushNamed(context, '/register'),
+                      ),
+                    )
+                  ]
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: RaisedButton(
+                        child: Text('Ranking'),
+                        onPressed: () => Navigator.pushNamed(context, '/ranking'),
+                      ),
+                    )
+                ])
+            ])
+          )
+        )
+      );
+    }
   }
 }
 

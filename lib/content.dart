@@ -121,10 +121,10 @@ class _ContentPageState extends State<ContentPage> {
   }
 }
 
-void postContent(BuildContext ctx, String content, String contest_id) async {
+void postContent(BuildContext ctx, String content, String contestId) async {
   Map data = {
     "content": content,
-    "contest_id": contest_id
+    "contest_id": contestId
   };
 
   String token = await storage.read(key: "token");    

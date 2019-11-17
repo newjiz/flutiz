@@ -61,7 +61,7 @@ class LoginFormState extends State<LoginForm> {
                   fetchLogin(context, user);
                 }
               },
-              child: Text('Submit'),
+              child: Text('Login'),
             ),
           ),
         ],
@@ -81,7 +81,8 @@ void fetchLogin(BuildContext ctx, Map user) async {
 
   if (response.statusCode == 200) {
     Token token = Token.fromJson(json.decode(response.body));
-    await storage.write(key: "token", value: token.token);    
+    await storage.write(key: "token", value: token.token);
+    logged = true;
     Navigator.popAndPushNamed(ctx, '/user');
   } else {
     Navigator.popAndPushNamed(ctx, '/login');
